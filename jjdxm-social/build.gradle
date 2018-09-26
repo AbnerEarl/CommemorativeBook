@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+
+ext {
+    //类库的module名、bintray上项目名、artifactId最好是一致的
+    jjdxm_bintrayRepo = 'maven'
+    jjdxm_bintrayName = 'jjdxm-social'
+
+    jjdxm_packaging = 'aar'
+    jjdxm_groupId = 'com.dou361.social'
+    jjdxm_artifactId = 'jjdxm-social'
+
+    jjdxm_libraryVersion = '1.0.4'
+    jjdxm_libraryName = 'jjdxm-social'
+    jjdxm_libraryDescription = 'this is a social library of the application'
+
+    jjdxm_siteUrl = 'https://github.com/jjdxmashl/jjdxm_social'
+    jjdxm_gitUrl = 'https://github.com/jjdxmashl/jjdxm_social.git'
+
+    jjdxm_developerId = 'jjdxmashl'
+    jjdxm_developerName = 'jjdxmashl'
+    jjdxm_developerEmail = '316988670@qq.com'
+
+    jjdxm_licenseName = 'The Apache Software License, Version 2.0'
+    jjdxm_licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    jjdxm_allLicenses = ["Apache-2.0"]
+
+    jjdxm_singlePath = 'build/intermediates/classes/release'
+    jjdxm_singleJar = jjdxm_artifactId+'-'+jjdxm_libraryVersion+'.jar'
+}
+
+android {
+//    compileSdkVersion rootProject.ext.compileSdkVersion
+//    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion 27
+    defaultConfig {
+        consumerProguardFiles 'proguard-rules.pro'
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+//    compile rootProject.ext.jjdxm_v4
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    compile 'com.squareup:otto:1.3.8'
+    compile 'com.dou361.weibo:jjdxm-weibo:1.0.1'
+    compile 'com.dou361.wechat:jjdxm-wechat:1.0.1'
+    compile 'com.dou361.tencent:jjdxm-tencent:1.0.1'
+}
+
+//apply from: 'https://raw.githubusercontent.com/jjdxmashl/jjdxm_ecodingprocess/master/bulidlib.gradle'
+//apply from: 'https://raw.githubusercontent.com/jjdxmashl/jjdxm_ecodingprocess/master/bintray.gradle'
