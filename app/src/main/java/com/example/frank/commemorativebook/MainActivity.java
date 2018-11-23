@@ -9,11 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.tamic.novate.Throwable;
 import com.tamic.novate.callback.RxStringCallback;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private  int tag=3;
     private  boolean browse=false;
     private String addUrl="https://jingyan.baidu.com/article/19020a0af8982d529d2842ba.html";
+    private String wlecomUrl="http://114.116.94.16:8080/SpecialDeviceExam/static/Image/Advertise/welcome.jpg";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         t_time=(TextView)this.findViewById(R.id.text_time);
         img_welcome=(ImageView)this.findViewById(R.id.img_welcome);
+        String keysig=UUID.randomUUID().toString();
+        Glide.with(MainActivity.this).load(wlecomUrl).signature(new StringSignature(keysig)).into(img_welcome);
+
         getAddUrl();
 
         img_welcome.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +165,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void getPhotoById(final String data){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Map<String, Object> paremetes = new HashMap<>();
+                    paremetes.put("data",data);
+                    ApiService.GetString(MainActivity.this, "getPhotoById", paremetes, new RxStringCallback() {
+                        @Override
+                        public void onNext(Object tag, String response) {
+                            //myAdapter.list_item.clear();
+                            String result=response.toString().trim();
+                            if (result.contains("#")){
+
+                                String pic_data[]=result.split("##");
+                                for (int i=0;i<pic_data.length;i++){
+
+                                    Map<String, Object> map1 =new HashMap<>();
+                                    map1.put("image",pic_data[i]);
+                                   // myAdapter.list_item.add(map1);
+                                }
+
+
+                            }
+                            //myAdapter.notifyDataSetChanged();
+                            //Glide.with(MainActivity.this).load(list_item.get(position).get("image").toString()).into(viewHolder.imageview_thumbnail);
+                            //viewHolder.checkBox_select.setText(list_item.get(position).get("text").toString());
+                        }
+
+                        @Override
+                        public void onError(Object tag, Throwable e) {
+                            Toast.makeText(MainActivity.this, "获取失败" + e, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        @Override
+                        public void onCancel(Object tag, Throwable e) {
+                            Toast.makeText(MainActivity.this, "获取失败" + e, Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+    }
 
 
 }

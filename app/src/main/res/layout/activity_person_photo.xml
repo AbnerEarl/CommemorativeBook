@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/editext_shape"
-        android:text="个人"
+        android:text="写真"
         app:layout_constraintStart_toEndOf="@+id/p_all_photo"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/editext_shape"
-        android:text="集体"
+        android:text="生活"
         app:layout_constraintStart_toEndOf="@+id/p_one_photo"
         app:layout_constraintTop_toTopOf="parent" />
 

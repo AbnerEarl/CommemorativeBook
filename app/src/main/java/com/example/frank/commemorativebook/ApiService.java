@@ -27,7 +27,7 @@ public class ApiService {
                     .addCache(false)
                     .baseUrl(Base_Url)
                     .addHeader(header)
-                    .addCookie(true)
+                    .addCookie(false)
                     .connectTimeout(500000)
                     .writeTimeout(500000)
                     .build();

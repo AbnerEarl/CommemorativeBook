@@ -8,9 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 public class PersonPhotoActivity extends AppCompatActivity {
 
@@ -61,14 +66,20 @@ public class PersonPhotoActivity extends AppCompatActivity {
     private String stu_id="";
     public static List<Map<String, Object>> list_show_photo= new ArrayList<Map<String, Object>>();
     private Map<String, Object> checked_list= new HashMap<String, Object>();
-    private boolean share_flag=false;
+    private static boolean share_flag=false;
     private String share_img_path="";
 
     public static  List<String> share_list = new ArrayList<>();
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_photo);
+
+        // android 7.0系统解决拍照的问题
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
 
 
         all_photo=(Button)this.findViewById(R.id.p_all_photo);
@@ -133,8 +144,9 @@ public class PersonPhotoActivity extends AppCompatActivity {
                     /*Intent intent = new Intent(PersonPhotoActivity.this, com.example.frank.commemorativebook.social.share.MainActivity.class);
                     intent.putExtra("url", list.get(0));
                     startActivity(intent);*/
-                    new MYTask().execute( list.get(0));
                     share_flag=true;
+                    new MYTask().execute( list.get(0));
+
 
                 }else {
                     Toast.makeText(PersonPhotoActivity.this, "请选择需要分享的图片", Toast.LENGTH_SHORT).show();
@@ -276,7 +288,7 @@ public class PersonPhotoActivity extends AppCompatActivity {
 
 
     private void saveBitmap(Bitmap bitmap,String image_Path) {
-        File appDir = new File(Environment.getExternalStorageDirectory(), "同学录图片文件夹");
+       /* File appDir = new File(Environment.getExternalStorageDirectory(), "同学录图片文件夹");
         if (!appDir.exists()) appDir.mkdir();
         String[] str = image_Path.split("/");
         String fileName = str[str.length - 1];
@@ -303,6 +315,37 @@ public class PersonPhotoActivity extends AppCompatActivity {
         if (share_flag){
             SharePhoto(share_img_path,PersonPhotoActivity.this);
             share_flag=false;
+        }*/
+
+        File appDir = new File(Environment.getExternalStorageDirectory(), "MyImages");
+        if (!appDir.exists()) appDir.mkdir();
+        /*String[] str = image_Path.split("/");
+        String fileName = str[str.length - 1];*/
+        String fileName=UUID.randomUUID().toString()+".png";
+        File file = new File(appDir, fileName);
+        Log.i("图片信息", "saveBitmap: 开始操作文件！");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            share_img_path=appDir+"/"+fileName;
+            //file.getAbsolutePath();//获取保存的图片的文件名
+            //    onSaveSuccess(file);
+        } catch (IOException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(PersonPhotoActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
+                }
+            });
+            e.printStackTrace();
+        }
+        dialog.dismiss();
+        if (share_flag){
+            share_flag=false;
+            SharePhoto(share_img_path,PersonPhotoActivity.this);
         }
 
     }
